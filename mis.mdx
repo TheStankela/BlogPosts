@@ -1,5 +1,5 @@
 ---
-title: 'This is my New Article'
+title: 'Mis'
 date: '2023-04-18'
 tags: ['next.js','nextjs','new']
 description: 'Static Generation(with and without data) is recommended whenever it is possible because your page can be...'
@@ -10,12 +10,34 @@ readingTime: '3'
 
 We recommend using **Static Generation** (with and without data) whenever possible because your page can be built once and served by CDN, which makes it much faster than having a server render the page on every request.
 
-```ts
-const sum = (num1: number, num2: number): number => {
-    return num1 + num2
-}
+```sql
+alter table NYCTaxi_Sample
+add ID_new int identity (1,1) not null
 
-console.log(sum(4,8)) //12
+create view DimTarife as 
+select ROW_NUMBER() over (order by rate_code asc) as TarifaID, rate_code as BrojTarife
+from
+(select distinct rate_code from dbo.nyctaxi_sample) as rate_code
+
+create view DimOperater as 
+select ROW_NUMBER() over (order by vendor_id asc) as OperaterID, vendor_id as NazivOperatera
+from
+(select distinct vendor_id from dbo.nyctaxi_sample) as vendor_id
+
+create view FactVoznja as 
+select 
+ID_new as VoznjaID,
+pickup_datetime as DatumPocetka,
+pickup_longitude as GeoSirPocetka,
+pickup_latitude as GeoDuzPocetka,
+DimTarife.TarifaID,
+DimOperater.OperaterID
+from
+dbo.nyctaxi_sample inner join DimTarife 
+on dbo.nyctaxi_sample.rate_code=DimTarife.BrojTarife
+inner join DimOperater
+on dbo.nyctaxi_sample.vendor_id=DimOperater.NazivOperatera
+
 ```
 
 You can use Static Generation for many types of pages, including:
