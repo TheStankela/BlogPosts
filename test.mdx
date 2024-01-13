@@ -11,6 +11,12 @@ readingTime: '3'
 We recommend using **Static Generation** (with and without data) whenever possible because your page can be built once and served by CDN, which makes it much faster than having a server render the page on every request.
 
 ```sql
+UPDATE AWBuilderVersion
+set ModifiedDate = GETDATE(),
+    [Database Version] = 'nova verzija'
+go
+
+
 alter table NYCTaxi_Sample
 add ID_new int identity (1,1) not null
 
